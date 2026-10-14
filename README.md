@@ -6,20 +6,18 @@
 ## 初步架構
 ```text
 點餐系統
-├── UI / Frontend
+├── UI
 ├── Menu
 ├── Order
 ├── Recommendation
-└── Checkout
+
 ```
 
 ### 初步分工
 
-| 組員 | 負責 |
-|---|---|
-| A | UI / Frontend |
-| B | Menu |
-| C | Order |
-| D | Recommendation |
-| E | Checkout |
+1. 菜單與資料管理
+2. 購物車與結帳
+3. 優惠與套餐
+4. 推薦系統
+5. 介面與整合  
 
