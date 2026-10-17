@@ -8,6 +8,7 @@ logger = logging.getLogger("menu")
 
 @dataclass
 class MenuItem:
+    """菜單單一品項資料類別"""
     item_id: str
     name: str
     price: int
@@ -16,8 +17,9 @@ class MenuItem:
 
 
 class Menu:
-    """
-    菜單
+    """菜單資料管理類別。
+
+    負責讀取預設 CSV 菜單檔案並解析為內部物件，同時提供記憶體內單品查詢與全菜單清單走訪介面。
     """
 
     CSV_PATH: str = "./data/menu.csv"
@@ -59,11 +61,18 @@ class Menu:
         return items
 
     def get_all_items(self) -> List[MenuItem]:
-        """取得所有菜單品項"""
+        """取得目前所有菜單品項清單。
+
+        :return: 包含所有 MenuItem 物件的 List
+        """
         return list(self._items.values())
 
     def search_by_id(self, item_id: str) -> Optional[MenuItem]:
-        """依據 item_id 查詢單品項，若不存在回傳 None"""
+        """根據品項 ID 查詢特定的菜單單品。
+
+        :param item_id: 品項唯一識別碼 (例如: "M001")
+        :return: 找到時回傳 MenuItem 物件，若不存在則回傳 None
+        """
         return self._items.get(item_id)
 
 if __name__ == "__main__":  # test
