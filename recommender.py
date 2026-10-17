@@ -1,5 +1,5 @@
 from typing import Dict, List
-from models import MenuItem
+from menu import MenuItem
 def get_recommendations(preferences: dict, menu_db: Dict[str, MenuItem]) -> List[MenuItem]:
     """
     根據使用者的偏好設定與菜單資料庫，篩選並推薦合適的餐點。
@@ -33,8 +33,8 @@ def get_recommendations(preferences: dict, menu_db: Dict[str, MenuItem]) -> List
     # 4. 排序：依符合的喜好分數由高到低排序
     candidates.sort(key=lambda x: x[0], reverse=True)
     
-    # 5. 限制數量 : 寫死最多推薦 3 個品項
-    MAX_RECOMMENDATIONS = 3
+    # 5. 限制數量 : 寫死最多推薦 5 個品項
+    MAX_RECOMMENDATIONS = 5
     recommended_items = [item for score, item in candidates[:MAX_RECOMMENDATIONS]]
     
     return recommended_items
