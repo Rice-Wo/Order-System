@@ -51,14 +51,19 @@ class Menu:
                     except (KeyError, ValueError) as e:
                         logger.error(f"解析 CSV 第 {line_num} 行失敗，已跳過該品項: {e}")
 
-            logger.info(f"成功載入 {len(items)} 個菜單品項")
-
         except FileNotFoundError:
-            logger.warning(f"預設菜單檔案不存在: '{self.CSV_PATH}'，已初始化為空菜單。")
-        except Exception as e:
-            logger.exception(f"讀取菜單時發生未預期錯誤: {e}")
+            logger.error(f"預設菜單檔案不存在: '{self.CSV_PATH}'")
+            raise
+        except Exception:
+            logger.exception(f"讀取菜單時發生未預期錯誤:")
+            raise
+        else:
+            if not items:
+                logger.error(f"菜單檔案 '{self.CSV_PATH}' 未包含任何有效品項。")
+                raise RuntimeError(f"菜單初始化失敗：'{self.CSV_PATH}' 無有效品項。")
+            logger.info(f"成功載入 {len(items)} 個菜單品項")
+            return items
 
-        return items
 
     def get_all_items(self) -> List[MenuItem]:
         """取得目前所有菜單品項清單。
