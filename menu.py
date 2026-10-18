@@ -87,8 +87,15 @@ if __name__ == "__main__":  # test
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logger.info("測試menu中")
+    logger.debug("測試menu中")
 
     menu = Menu()
-    A = menu.get_all_items()
-    print(A)
+    # 測試獲取全部
+    all_menu = menu.get_all_items()
+    print(len(all_menu))  # 共有50道菜
+    # 測試ID獲取
+    valid_dish = menu.search_by_id("M001")
+    print(valid_dish)
+    # 測試不存在ID獲取
+    invalid_dish = menu.search_by_id("ABC")
+    print(invalid_dish)
