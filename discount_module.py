@@ -9,7 +9,7 @@ def get_cart_totals(cart: List[dict]) -> tuple:
         price = item.get("price", 0)
         quantity = item.get("quantity", 1)
         
-        # 直接由你指定 M003 為特價品，或者看前端有沒有傳 is_special
+        # 假設：指定 M003 為特價品：萬聖節限定
         is_special = item.get("is_special", False)
         if item.get("item_id") == "M003":
             is_special = True
