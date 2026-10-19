@@ -72,7 +72,7 @@ class Menu:
         """
         return list(self._items.values())
 
-    def search_by_id(self, item_id: str) -> Optional[MenuItem]:
+    def get_by_id(self, item_id: str) -> Optional[MenuItem]:
         """根據品項 ID 查詢特定的菜單單品。
 
         :param item_id: 品項唯一識別碼 (例如: "M001")
@@ -94,8 +94,8 @@ if __name__ == "__main__":  # test
     all_menu = menu.get_all_items()
     print(len(all_menu))  # 共有50道菜
     # 測試ID獲取
-    valid_dish = menu.search_by_id("M001")
+    valid_dish = menu.get_by_id("M001")
     print(valid_dish)
     # 測試不存在ID獲取
-    invalid_dish = menu.search_by_id("ABC")
+    invalid_dish = menu.get_by_id("ABC")
     print(invalid_dish)

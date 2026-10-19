@@ -140,8 +140,8 @@ if __name__ == "__main__":
     menu = Menu()
     cart = []
 
-    item1 = menu.search_by_id("M001")
-    item2 = menu.search_by_id("S001")
+    item1 = menu.get_by_id("M001")
+    item2 = menu.get_by_id("S001")
 
     if item1 and item2:
         cart = add_item(cart, item1, 2)
