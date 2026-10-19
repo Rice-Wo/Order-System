@@ -64,7 +64,6 @@ class Menu:
             logger.info(f"成功載入 {len(items)} 個菜單品項")
             return items
 
-
     def get_all_items(self) -> List[MenuItem]:
         """取得目前所有菜單品項清單。
 
@@ -79,6 +78,7 @@ class Menu:
         :return: 找到時回傳 MenuItem 物件，若不存在則回傳 None
         """
         return self._items.get(item_id)
+
 
 if __name__ == "__main__":  # test
     logging.basicConfig(
