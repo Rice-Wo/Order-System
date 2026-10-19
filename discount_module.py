@@ -1,4 +1,4 @@
-ffrom typing import List
+from typing import List
 
 def get_cart_totals(cart: List[dict]) -> tuple:
     """輔助函數：計算總價與可套用折扣的總價（排除特價品）"""
