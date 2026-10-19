@@ -1,23 +1,27 @@
-from typing import List
+ffrom typing import List
 
 def get_cart_totals(cart: List[dict]) -> tuple:
-    """計算總價與可套用折扣的總價（排除特價品）"""
+    """輔助函數：計算總價與可套用折扣的總價（排除特價品）"""
     total = 0
     eligible_total = 0
     
     for item in cart:
         price = item.get("price", 0)
         quantity = item.get("quantity", 1)
-        is_special = item.get("is_special", False)
         
+        # 直接由你指定 M003 為特價品，或者看前端有沒有傳 is_special
+        is_special = item.get("is_special", False)
+        if item.get("item_id") == "M003":
+            is_special = True
+            
         row_total = price * quantity
         total += row_total
         
+        # 特價品不列入折扣碼可折抵的範圍
         if not is_special:
             eligible_total += row_total
             
     return total, eligible_total
-
 
 def apply_coupon(cart: List[dict], code: str) -> dict:
     """計算折扣碼優惠"""
