@@ -51,14 +51,18 @@ class Menu:
                     except (KeyError, ValueError) as e:
                         logger.error(f"解析 CSV 第 {line_num} 行失敗，已跳過該品項: {e}")
 
-            logger.info(f"成功載入 {len(items)} 個菜單品項")
-
         except FileNotFoundError:
-            logger.warning(f"預設菜單檔案不存在: '{self.CSV_PATH}'，已初始化為空菜單。")
-        except Exception as e:
-            logger.exception(f"讀取菜單時發生未預期錯誤: {e}")
-
-        return items
+            logger.error(f"預設菜單檔案不存在: '{self.CSV_PATH}'")
+            raise
+        except Exception:
+            logger.exception(f"讀取菜單時發生未預期錯誤:")
+            raise
+        else:
+            if not items:
+                logger.error(f"菜單檔案 '{self.CSV_PATH}' 未包含任何有效品項。")
+                raise RuntimeError(f"菜單初始化失敗：'{self.CSV_PATH}' 無有效品項。")
+            logger.info(f"成功載入 {len(items)} 個菜單品項")
+            return items
 
     def get_all_items(self) -> List[MenuItem]:
         """取得目前所有菜單品項清單。
@@ -67,13 +71,14 @@ class Menu:
         """
         return list(self._items.values())
 
-    def search_by_id(self, item_id: str) -> Optional[MenuItem]:
+    def get_by_id(self, item_id: str) -> Optional[MenuItem]:
         """根據品項 ID 查詢特定的菜單單品。
 
         :param item_id: 品項唯一識別碼 (例如: "M001")
         :return: 找到時回傳 MenuItem 物件，若不存在則回傳 None
         """
         return self._items.get(item_id)
+
 
 if __name__ == "__main__":  # test
     logging.basicConfig(
@@ -82,8 +87,15 @@ if __name__ == "__main__":  # test
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    logger.info("測試menu中")
+    logger.debug("測試menu中")
 
     menu = Menu()
-    A = menu.get_all_items()
-    print(A)
+    # 測試獲取全部
+    all_menu = menu.get_all_items()
+    print(len(all_menu))  # 共有50道菜
+    # 測試ID獲取
+    valid_dish = menu.get_by_id("M001")
+    print(valid_dish)
+    # 測試不存在ID獲取
+    invalid_dish = menu.get_by_id("ABC")
+    print(invalid_dish)
