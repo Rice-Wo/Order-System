@@ -1,9 +1,5 @@
 from typing import List, Dict, Any
-
-try:
-    from models import MenuItem
-except ImportError:
-    from menu import MenuItem
+from menu import MenuItem
 
 
 def add_item(cart: List[dict], item_obj: MenuItem, qty: int) -> List[dict]:
