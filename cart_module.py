@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Any
 
 try:
     from models import MenuItem
@@ -79,9 +79,9 @@ def generate_receipt(
     cart: List[dict],
     final_total: int,
     discount: dict
-) -> str:
+) -> Dict[str, Any]:
     """
-    產生文字版結帳明細。
+    產生結構化結帳明細資料字典，供上層解析或前端渲染使用。
 
     discount 預期格式：
     {
@@ -90,7 +90,39 @@ def generate_receipt(
         "new_total": int,
         "message": str
     }
+
+    回傳字典格式：
+    {
+        "items": List[dict],     # 各品項明細列表
+        "subtotal": int,         # 商品小計
+        "discount_value": int,   # 折扣金額
+        "discount_message": str, # 折扣說明
+        "final_total": int,      # 應付金額
+        "receipt_text": str      # 排版好的文字版明細
+    }
     """
+    subtotal = calculate_subtotal(cart)
+    
+    items_detail = []
+    for cart_item in cart:
+        item = cart_item["item"]
+        qty = cart_item["qty"]
+        item_total = item.price * qty
+        items_detail.append({
+            "item_id": item.item_id,
+            "name": item.name,
+            "price": item.price,
+            "qty": qty,
+            "subtotal": item_total
+        })
+
+    discount_value = 0
+    discount_message = ""
+    if discount:
+        discount_value = discount.get("discount_value", 0)
+        discount_message = discount.get("message", "")
+
+    # 建立文字版明細 (receipt_text)
     lines = []
     lines.append("=" * 32)
     lines.append("           點餐明細")
@@ -101,37 +133,43 @@ def generate_receipt(
         lines.append("-" * 32)
         lines.append(f"應付金額：${final_total}")
         lines.append("=" * 32)
-        return "\n".join(lines)
+        receipt_text = "\n".join(lines)
+        return {
+            "items": [],
+            "subtotal": 0,
+            "discount_value": 0,
+            "discount_message": "",
+            "final_total": final_total,
+            "receipt_text": receipt_text
+        }
 
-    subtotal = calculate_subtotal(cart)
-
-    for cart_item in cart:
-        item = cart_item["item"]
-        qty = cart_item["qty"]
-        item_total = item.price * qty
-
+    for item_detail in items_detail:
         lines.append(
-            f"{item.name} x {qty}  ${item_total}"
+            f"{item_detail['name']} x {item_detail['qty']}  ${item_detail['subtotal']}"
         )
 
     lines.append("-" * 32)
     lines.append(f"商品小計：${subtotal}")
 
-    discount_value = 0
-    if discount:
-        discount_value = discount.get("discount_value", 0)
+    if discount_value > 0:
+        lines.append(f"優惠折扣：-${discount_value}")
 
-        if discount_value > 0:
-            lines.append(f"優惠折扣：-${discount_value}")
-
-        message = discount.get("message", "")
-        if message:
-            lines.append(f"優惠資訊：{message}")
+    if discount_message:
+        lines.append(f"優惠資訊：{discount_message}")
 
     lines.append(f"應付金額：${final_total}")
     lines.append("=" * 32)
+    
+    receipt_text = "\n".join(lines)
 
-    return "\n".join(lines)
+    return {
+        "items": items_detail,
+        "subtotal": subtotal,
+        "discount_value": discount_value,
+        "discount_message": discount_message,
+        "final_total": final_total,
+        "receipt_text": receipt_text
+    }
 
 
 if __name__ == "__main__":
@@ -157,8 +195,15 @@ if __name__ == "__main__":
             "message": "滿額折 $20",
         }
 
-        print(generate_receipt(
+        receipt_data = generate_receipt(
             cart,
             discount["new_total"],
             discount
-        ))
+        )
+
+        # 測試列印文字版明細
+        print(receipt_data["receipt_text"])
+        
+        # 測試上層存取結構化資料
+        print("結構化品項數量：", len(receipt_data["items"]))
+        print("最終應付金額：", receipt_data["final_total"])
