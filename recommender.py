@@ -1,12 +1,15 @@
 from typing import Dict, List
+from collections import defaultdict
 from menu import MenuItem
+
 def get_recommendations(preferences: dict, menu_db: Dict[str, MenuItem]) -> List[MenuItem]:
     """
     根據使用者的偏好設定與菜單資料庫，篩選並推薦合適的餐點。
+    修改為：每個餐點類別（category）各自取分數最高的前 5 個品項，方便套餐模組進行跨類別組合。
     
     :param preferences: 包含 max_budget (int), taste_like (List[str]), taste_dislike (List[str])
     :param menu_db: 字典格式 {item_id: MenuItem}
-    :return: 推薦的 MenuItem 列表
+    :return: 推薦的 MenuItem 列表（各類別最多 5 個）
     """
     max_budget = preferences.get("max_budget", float('inf'))
     taste_like = preferences.get("taste_like", [])
@@ -33,8 +36,14 @@ def get_recommendations(preferences: dict, menu_db: Dict[str, MenuItem]) -> List
     # 4. 排序：依符合的喜好分數由高到低排序
     candidates.sort(key=lambda x: x[0], reverse=True)
     
-    # 5. 限制數量 : 寫死最多推薦 5 個品項
-    MAX_RECOMMENDATIONS = 5
-    recommended_items = [item for score, item in candidates[:MAX_RECOMMENDATIONS]]
-    
+    # 5. 依分類（category）分組，每個分類最多取 5 個品項
+    category_dict = defaultdict(list)
+    for score, item in candidates:
+        category_dict[item.category].append(item)
+        
+    recommended_items = []
+    MAX_PER_CATEGORY = 5
+    for cat, items in category_dict.items():
+        recommended_items.extend(items[:MAX_PER_CATEGORY])
+        
     return recommended_items
