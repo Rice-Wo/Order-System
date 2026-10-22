@@ -4,6 +4,7 @@ from menu import MenuItem
 def get_recommendations(preferences: dict, menu_db: Dict[str, MenuItem], limit: Optional[int] = 5, mode: str = "general",) -> List[MenuItem]:
     """
     根據使用者的偏好設定與菜單資料庫，篩選並推薦合適的餐點。
+    修改為：每個餐點類別（category）各自取分數最高的前 5 個品項，方便套餐模組進行跨類別組合。
     
     :param preferences: 包含 max_budget (int), taste_like (List[str]), taste_dislike (List[str])
     :param menu_db: 字典格式 {item_id: MenuItem}
